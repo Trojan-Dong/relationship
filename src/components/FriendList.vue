@@ -1,11 +1,9 @@
 <template>
   <div id="friendList">
 
-    <div class="list" v-for="(friendInfo,index) in friendList" v-bind:key="index"
-         v-on:click="toSendPage(friendInfo)">
+    <div class="list" v-for="(friendInfo,index) in friendList" v-bind:key="index" v-on:click="toSendPage(friendInfo)">
       <div class="pic">
-        <img
-          src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598875856740&di=483b8f1c98a70ee32a624049246473fe&imgtype=0&src=http://c-ssl.duitang.com/uploads/item/202008/15/20200815203046_pwcze.thumb.400_0.jpeg">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598875856740&di=483b8f1c98a70ee32a624049246473fe&imgtype=0&src=http://c-ssl.duitang.com/uploads/item/202008/15/20200815203046_pwcze.thumb.400_0.jpeg">
       </div>
       <div class="message">
         <div class="message_top">
@@ -17,7 +15,7 @@
         </div>
       </div>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 <script>
@@ -28,14 +26,15 @@
 
   export default {
     name: 'friend',
-    data () {
+    data() {
       return {
         friendList: [],
         messageList: []
       }
     },
     methods: {
-      toSendPage (friendInfo) {
+      toSendPage(friendInfo) {
+        console.log(friendInfo)
         this.$router.push({
           name: 'SendMessage',
           params: {
@@ -44,7 +43,7 @@
         })
       }
     },
-    mounted () {
+    mounted() {
       var page = this
       var user = this.$cookies.get('user')
       if (user == null || user == '') {
@@ -54,9 +53,11 @@
           params: {}
         })
       } else {
-        axios.post(page.HOST + '/listAllUser').then(function (res) {
+        axios.post(page.HOST + '/listAllUser').then(function(res) {
+          console.log(res);
           page.friendList = res.data
-        }).catch(function (error) {
+          console.log(page.friendList);
+        }).catch(function(error) {
           console.log(error)
         })
       }

@@ -30,41 +30,42 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import "@/css/login.css";
+  import axios from 'axios'
+  import '@/css/login.css'
+  import Storage from '../js/storage'
 
   export default {
-    name: "Login",
-    data() {
+    name: 'Login',
+    data () {
       return {
-        userName: "",
-        password: ""
+        userName: '',
+        password: ''
       }
     },
     methods: {
       login: function () {
-        var page = this;
-        var params = this.$route.params;
+        var page = this
+        var params = this.$route.params
         axios.post(this.HOST + '/login', {
-          "loginName": page.userName,
-          "password": page.password
+          'loginName': page.userName,
+          'password': page.password
         }).then(function (res) {
-          page.$cookies.set("user", {id: res.data.id, loginName: res.data.loginname});
-
+          page.$cookies.set('user', {id: res.data.user.id, loginName: res.data.user.loginname})
           page.$router.push({
-            name: "FriendList",
+            name: 'FriendList',
             params: {}
           })
+          Storage.localSet('token', res.data.token) // 覆盖原来的token(默认一天刷新一次)
         }).catch(function (error) {
-          console.debug(error);
-        });
+          console.log(error)
+        })
       },
 
       cancel: function () {
-        this.$router.push("./index")
+        this.$router.push('./index')
       }
     },
-    mounted() {
+    mounted () {
 
     }
   }

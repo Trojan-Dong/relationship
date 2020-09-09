@@ -116,13 +116,14 @@
       }
     },
     mounted () {
-      var page = this
-      this.user = this.$cookies.get('user')
-      this.userId = this.user.id
-      var params = this.$route.params
-      console.log(params.friend)
-      this.receiver = params.friend
-      this.connection()
+      var page = this;
+      this.user = this.$cookies.get('user');
+      console.log(this.user)
+      this.userId = this.user.id;
+      var params = this.$route.params;
+      console.log(params.friend);
+      this.receiver = params.friend;
+      this.connection();
       axios.post(page.HOST + '/getHistoryMessage', {
         'receiverId': page.user.id,
         'senderId': page.receiver.id,
