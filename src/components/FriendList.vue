@@ -3,19 +3,21 @@
 
     <div class="list" v-for="(friendInfo,index) in friendList" v-bind:key="index" v-on:click="toSendPage(friendInfo)">
       <div class="pic">
-        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598875856740&di=483b8f1c98a70ee32a624049246473fe&imgtype=0&src=http://c-ssl.duitang.com/uploads/item/202008/15/20200815203046_pwcze.thumb.400_0.jpeg">
+        <img
+          src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1598875856740&di=483b8f1c98a70ee32a624049246473fe&imgtype=0&src=http://c-ssl.duitang.com/uploads/item/202008/15/20200815203046_pwcze.thumb.400_0.jpeg">
       </div>
       <div class="message">
         <div class="message_top">
-          <span class="name"> {{ friendInfo.loginName }} </span>
+          <span class="name"> {{ friendInfo.friendName }} </span>
           <span class="status"> {{ friendInfo.status=='0'?'在线':'离线' }} </span>
         </div>
         <div class="message_bottom">
-          <div class="noread_mess">1</div>
+          <div class="lastMsg">{{ friendInfo.lastMsg }}</div>
+          <div v-if="friendInfo.msgCount>0" class="noread_mess">{{ friendInfo.msgCount }}</div>
         </div>
       </div>
     </div>
-    <router-view />
+    <router-view/>
   </div>
 </template>
 <script>
@@ -26,43 +28,44 @@
 
   export default {
     name: 'friend',
-    data() {
+    data () {
       return {
         friendList: [],
         messageList: []
       }
     },
     methods: {
-      toSendPage(friendInfo) {
-        console.log(friendInfo)
+      toSendPage (friendInfo) {
         this.$router.push({
           name: 'SendMessage',
           params: {
-            friend: friendInfo
+            friend: {
+              id:friendInfo.friendId,
+              loginName:friendInfo.friendName
+            }
           }
         })
       }
     },
-    mounted() {
+    mounted () {
       var page = this
       var user = this.$cookies.get('user')
       if (user == null || user == '') {
-        console.log(user)
         this.$router.push({
           name: 'login',
           params: {}
         })
       } else {
-        axios.post(page.HOST + '/listAllUser').then(function(res) {
-          console.log(res);
-          page.friendList = res.data
-          console.log(page.friendList);
-        }).catch(function(error) {
+        axios.post(page.HOST + '/getFriendList', {
+          'userId': user.id,
+        }).then(function (res) {
+          page.friendList = res.data.friendList;
+          var websocket = connection(user.id,page.friendList)
+          console.log(websocket)
+        }).catch(function (error) {
           console.log(error)
         })
       }
-      var websocket = connection(user.id)
-      console.log(websocket)
     }
   }
 </script>
@@ -115,6 +118,16 @@
   .message_bottom {
     width: 100%;
     height: 50%;
+  }
+
+  .lastMsg {
+    float: left;
+    margin-left: 0.5rem;
+    margin-top: 0.3rem;
+    margin-right: 0.3rem;
+    font-size: 0.5rem;
+    text-align: center;
+    line-height: 1rem;
   }
 
   .noread_mess {

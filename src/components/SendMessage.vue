@@ -128,7 +128,7 @@
         'receiverId': page.user.id,
         'senderId': page.receiver.id,
       }).then(function (res) {
-        // console.log(res.data[0])
+        console.log(res)
         for (var i = 0; i < res.data.length; i++) {
           var info = {
             'sender': res.data[i]['senderId'],

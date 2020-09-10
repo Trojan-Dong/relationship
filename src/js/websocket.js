@@ -1,15 +1,17 @@
 let websocket = null
 // const WSHOST = 'ws://www.donguju.com'
 const WSHOST = 'ws://localhost'
+let friendCollection = null
 
-export function connection (username) {
+export function connection (username, friendList) {
+  friendCollection = friendList
   if ('WebSocket' in window) {
     websocket = new WebSocket(WSHOST + '/relationship/websocket/' + username)
     initWebSocket()
   } else {
     alert('当前浏览器 Not support websocket')
   }
-  return websocket;
+  return websocket
 }
 
 function initWebSocket () {
@@ -37,9 +39,19 @@ function setOnopenMessage () {
   console.log('WebSocket连接成功    状态码：' + websocket.readyState)
 }
 
-function setOnmessageMessage () {
-  alert();
+function setOnmessageMessage (event) {
+  console.log(friendCollection)
   // 根据服务器推送的消息做自己的业务处理
+  for (var i = 0; i < friendCollection.length; i++) {
+    var message = JSON.parse(event.data)
+    for (var key in message) {
+      if (friendCollection[i].friendId == key) {
+        friendCollection[i].lastMsg=message[key].text;
+        friendCollection[i].msgCount+=1;
+      }
+    }
+
+  }
   console.log('服务端返回：' + event.data)
 
 }
